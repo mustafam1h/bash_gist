@@ -1,0 +1,44 @@
+#!/bin/bash
+
+
+# Input arguments
+input_image="$1"
+output_image="$2"
+x="10"           # X-coordinate of the top-left corner of the trademark
+y="625"           # Y-coordinate of the top-left corner of the trademark
+width="50"       # Width of the area to be blurred/removed
+height="50"      # Height of the area to be blurred/removed
+
+# Option 1: Blur the trademark area
+#magick.exe convert  "$input_image" -region "$10x$625+$100+$100" -blur 0x8 "$output_image"1532,675
+
+# Loop through each image in the input folder
+for image in *.{jpg,jpeg,png,gif}; do
+    if [ -f "$image" ]; then
+        # Get the base name of the image file (without path)
+        base_name=$(basename "$image")
+        
+        # Set the output image path
+        output_image="output/$base_name"
+
+        # Option 1: Blur the trademark area
+       # convert "$image" -region "${width}x${height}+$x+$y" -blur 0x8 "$output_image"
+
+		magick.exe "$image" -region "${width}x${height}+$x+$y" -blur 0x8  -region "100x100+1450+650" -blur 0x8  "$output_image"
+
+        # Option 2: Replace the trademark area with a solid color (e.g., white)
+        # Uncomment the line below and comment the blur option if you prefer this method
+        # convert "$image" -fill white -draw "rectangle $x,$y $((x+width)),$((y+height))" "$output_image"
+
+        echo "Processed $image -> $output_image"
+    fi
+done
+
+
+
+
+# Option 2: Replace the trademark area with a solid color (e.g., white)
+# Uncomment the line below and comment the blur option if you prefer this method
+# convert "$input_image" -fill white -draw "rectangle $x,$y $((x+width)),$((y+height))" "$output_image"
+
+echo "Trademark removed and saved as $output_image"
